@@ -17,7 +17,7 @@
   var version = "0.0.1";
 
   // Currently supported units.
-  var supportedUnits = ['cm', 'm', 'ft'];
+  var supportedUnits = ['cm', 'm', 'ft', 'in'];
 
   // Function used during new Length object creation. Check 'length' function.
   function validate(value, unit) {
@@ -30,56 +30,37 @@
     }
   }
 
-  // Functions which are going to be available in every Length object prototype.
-  function toMeter() {
-    switch (this.unit) {
-      case 'cm': {
-        return this.value * 0.01;
-      }
-      case 'm': {
-        return this.value;
-      }
-      case 'ft': {
-        return this.value * 0.3048;
-      }
+  function toStandard(value, unit) {
+    const toStandardByUnit = {
+      'm': () => value * 100,
+      'cm': () => value,
+      'ft': () => value * 30.48,
+      'in': () => value * 2.54,
     }
+    // Returns value in centimeters
+    return toStandardByUnit[unit];
   }
 
-  function toCentimeter() {
-    switch (this.unit) {
-      case 'm': {
-        return this.value * 100;
-      }
-      case 'cm': {
-        return this.value;
-      }
-      case 'ft': {
-        return this.value * 30.48;
-      }
-    }
-  }
+  function to(unit) {
+    // Just check if passed unit is available - value is not important in this case
+    validate(1, unit);
+    const standardUnit = toStandard(this.value, this.unit)();
 
-  function toFoot() {
-    switch (this.unit) {
-      case 'm': {
-        return this.value * (1 / 0.3048);
-      }
-      case 'cm': {
-        return this.value * (1 / 30.48);
-      }
-      case 'ft': {
-        return this.value;
-      }
+    const toByUnit = {
+      'm': () => standardUnit * 0.01,
+      'cm': () => standardUnit,
+      'ft': () => standardUnit * (1 / 30.48),
+      'in': () => standardUnit * (1 / 2.58),
     }
+
+    return toByUnit[unit]();
   }
 
   // Initialize Length object prototype
   var proto = Length.prototype = {};
   // Insert functions into Length object prototype
   proto.version = version;
-  proto.toMeter = toMeter;
-  proto.toCentimeter = toCentimeter;
-  proto.toFoot = toFoot;
+  proto.to = to;
 
   // Expose Length prototype If user wants to add new functions
   length.fn = proto;
