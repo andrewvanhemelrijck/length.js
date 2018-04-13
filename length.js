@@ -6,10 +6,8 @@
 ;(function (global) {
 
   // Main length function (availavlable by global.length) which is
-  // allowing us to create an object by calling 'length()' istead of 'new Length()'
+  // allowing us to create an object by calling 'length()' instead of 'new Length()'
   var length = function (value, unit) {
-    // Check if passed arguments are valid. If not - throw an error.
-    validate(value, unit);
     return new Length(value, unit)
   }
 
@@ -17,7 +15,7 @@
   var version = "0.0.3";
 
   // Currently supported units.
-  var supportedUnits = ['cm', 'm', 'ft'];
+  var supportedUnits = ['cm', 'dm', 'm', 'km', 'in', 'ft', 'yd', 'mi'];
 
   // Function used during new Length object creation. Check 'length' function.
   function validate(value, unit) {
@@ -30,64 +28,116 @@
     }
   }
 
-  // Functions which are going to be available in every Length object prototype.
-  function toMeter() {
-    switch (this.unit) {
-      case 'cm': {
-        return this.value * 0.01;
-      }
-      case 'm': {
-        return this.value;
-      }
-      case 'ft': {
-        return this.value * 0.3048;
-      }
+  function toStandard(value, unit) {
+    const toStandardByUnit = {
+      cm: function() {
+        return value;
+      },
+      dm: function() {
+        return value * 10;
+      },
+      m: function() {
+        return value * 100;
+      },
+      km: function() {
+        return value * 10000;
+      },
+      in: function() {
+        return value * 2.54;
+      },
+      ft: function() {
+        return value * 30.48;
+      },
+      yd: function() {
+        return value * 91.44;
+      },
+      mi: function() {
+        return value * 1609.344;
+      },
     }
+    // Returns value in centimeters
+    return toStandardByUnit[unit];
   }
 
-  function toCentimeter() {
-    switch (this.unit) {
-      case 'm': {
-        return this.value * 100;
-      }
-      case 'cm': {
-        return this.value;
-      }
-      case 'ft': {
-        return this.value * 30.48;
-      }
+  function to(unit) {
+    // Just check if passed unit is available - value is not important in this case
+    validate(1, unit);
+    const standardUnit = toStandard(this.value, this.unit)();
+
+    const toByUnit = {
+      cm: function() {
+        return standardUnit;
+      },
+      dm: function() {
+        return standardUnit * 0.1;
+      },
+      m: function() {
+        return standardUnit * 0.01;
+      },
+      km: function() {
+        return standardUnit * 0.0001;
+      },
+      in: function() {
+        return standardUnit * (1 / 2.54);
+      },
+      ft: function() {
+        return standardUnit * (1 / 30.48);
+      },
+      yd: function() {
+        return standardUnit * (1 / 91.44);
+      },
+      mi: function() {
+        return standardUnit * (1 / 1609.344);
+      },
     }
+
+    this.unit = unit;
+    this.value = toByUnit[unit]()
+
+    return this;
   }
 
-  function toFoot() {
-    switch (this.unit) {
-      case 'm': {
-        return this.value * (1 / 0.3048);
-      }
-      case 'cm': {
-        return this.value * (1 / 30.48);
-      }
-      case 'ft': {
-        return this.value;
-      }
+  function add(value) {
+    if (typeof value !== 'number' || !value || value <= 0) {
+      throw Error('add() argument must be number bigger than 0!')
     }
+    this.value = this.value + value;
+    return this;
+  }
+
+  function getValue() {
+    return this.value;
+  }
+
+  function getUnit() {
+    return this.unit;
+  }
+
+  function getString(digits) {
+    let value;
+
+    value = digits ? this.value.toFixed(digits) : this.value;
+    return value + this.unit;
   }
 
   // Initialize Length object prototype
   var proto = Length.prototype = {};
   // Insert functions into Length object prototype
   proto.version = version;
-  proto.toMeter = toMeter;
-  proto.toCentimeter = toCentimeter;
-  proto.toFoot = toFoot;
+  proto.to = to;
+  proto.add = add;
+  proto.getValue = getValue;
+  proto.getUnit = getUnit;
+  proto.getString = getString;
 
   // Expose Length prototype If user wants to add new functions
   length.fn = proto;
 
   // The actual Length object is created here
   function Length(value, unit) {
-    this.value = value || 1;
-    this.unit = unit || 'cm';
+    validate(value, unit);
+    this.value = value;
+    this.unit = unit;
   }
 
   // Expose 'length' and 'L$' identifiers

@@ -60,10 +60,15 @@ Creates an object which contains value, unit, and conversion methods.
 * **value** _**``(Number)``**_: Number of units.
 * **unit** _**``(String)``**_: Unit type.  
   
-  Available unit types:
+  Available unit types: 
   * **``cm``**: centimeter,
+  * **``dm``**: decimeter,
   * **``m``**: meter,
-  * **``ft``**: foot.
+  * **``km``**: kilometer,
+  * **``ft``**: foot,
+  * **``in``**: inch,
+  * **``yd``**: yard,
+  * **``mi``**: mile.
 
 #### Returns
 * _**``(Object)``**_: Returns new **Length** object.
@@ -77,39 +82,80 @@ length(12, 'cm');
 
 ## Methods
 
-### ``.toMeter()``
+### ``.to(unit)``
+
+#### Arguments
+* **unit** _**``(String)``**_: Unit type. [Available unit types](#arguments).
 
 #### Returns
-* _**``(Number)``**_: Value converted to meters.
+* _**``(Object)``**_: **Length** object with value converted to passed unit.
 
 #### Example
 ```javascript
-length(100, 'cm').toMeter();
-// => 1
+length(100, 'cm').to('m');
+// => { value: 1, unit: 'm' }
 ```
  
 ---
 
-### ``.toCentimeter()``
+### ``.getValue()``
 
 #### Returns
-* _**``(Number)``**_: Value converted to centimeters.
+* _**``(Number)``**_: Current value.
 
 #### Example
 ```javascript
-length(1, 'm').toCentimeter();
+length(100, 'cm').getValue();
 // => 100
 ```
 
 ---
 
-### ``.toFoot()``
+### ``.getUnit()``
 
 #### Returns
-* _**``(Number)``**_: Value converted to foots.
+* _**``(String)``**_: Current unit type.
 
 #### Example
 ```javascript
-length(1, 'm').toFoot();
-// =>  3.280839895013
+length(100, 'cm').getUnit();
+// => cm
+```
+
+---
+
+### ``.getString(digits)``
+
+#### Arguments
+* **digits** _**``(Number)``**_: The number of digits to appear after the decimal point.
+
+#### Returns
+* _**``(String)``**_: String containing value and unit type.
+
+#### Example
+```javascript
+length(100, 'cm').getString();
+// => 100cm
+length(100, 'cm').getString(2);
+// => 100.00cm
+length(30, 'cm').to('ft').getString();
+// => 0.984251968503937ft
+length(30, 'cm').to('ft').getString(2);
+// => 0.98ft
+```
+
+---
+
+### ``.add(value)``
+
+#### Arguments
+* **value** _**``(Number)``**_: The number to increment value.
+
+#### Returns
+* _**``(Object)``**_: **Length** object with incremented value.
+
+#### Example
+```javascript
+length(100, 'cm').add(2);
+// => { value: 102, unit: 'cm' }
 ```
