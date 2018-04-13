@@ -1,5 +1,5 @@
 /*!
- * length.js v0.0.3 (https://github.com/appalaszynski/length.js)
+ * length.js v0.0.4 (https://github.com/appalaszynski/length.js)
  * Copyright (c) 2018 appalaszynski (https://github.com/appalaszynski)
  * Licensed under MIT (https://github.com/appalaszynski/length.js/blob/master/LICENSE)
  */
@@ -12,7 +12,7 @@
   }
 
   // Current length.js version.
-  var version = "0.0.3";
+  var version = "0.0.4";
 
   // Currently supported units.
   var supportedUnits = ['cm', 'dm', 'm', 'km', 'in', 'ft', 'yd', 'mi'];
@@ -29,7 +29,7 @@
   }
 
   function toStandard(value, unit) {
-    const toStandardByUnit = {
+    var toStandardByUnit = {
       cm: function() {
         return value;
       },
@@ -62,9 +62,9 @@
   function to(unit) {
     // Just check if passed unit is available - value is not important in this case
     validate(1, unit);
-    const standardUnit = toStandard(this.value, this.unit)();
+    var standardUnit = toStandard(this.value, this.unit)();
 
-    const toByUnit = {
+    var toByUnit = {
       cm: function() {
         return standardUnit;
       },
@@ -114,7 +114,7 @@
   }
 
   function getString(digits) {
-    let value;
+    var value;
 
     value = digits ? this.value.toFixed(digits) : this.value;
     return value + this.unit;
