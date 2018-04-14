@@ -1,5 +1,5 @@
 /*!
- * length.js v0.0.4 (https://github.com/appalaszynski/length.js)
+ * length.js v0.0.5 (https://github.com/appalaszynski/length.js)
  * Copyright (c) 2018 appalaszynski (https://github.com/appalaszynski)
  * Licensed under MIT (https://github.com/appalaszynski/length.js/blob/master/LICENSE)
  */
@@ -12,7 +12,7 @@
   }
 
   // Current length.js version.
-  var version = "0.0.4";
+  var version = "0.0.5";
 
   // Currently supported units.
   var supportedUnits = ['cm', 'dm', 'm', 'km', 'in', 'ft', 'yd', 'mi'];
@@ -52,7 +52,7 @@
         return value * 91.44;
       },
       mi: function() {
-        return value * 1609.344;
+        return value *  16093.43979;
       },
     }
     // Returns value in centimeters
@@ -87,7 +87,7 @@
         return standardUnit * (1 / 91.44);
       },
       mi: function() {
-        return standardUnit * (1 / 1609.344);
+        return standardUnit * (1 /  16093.43979);
       },
     }
 
